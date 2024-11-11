@@ -1,0 +1,34 @@
+<!DOCTYPE html>
+<html lang="en">
+    <head>
+        <meta charset="UTF-8"> <!-- Character encoding for the document -->
+        <meta name="viewport" content="width=device-width, initial-scale=1.0"/> <!-- Ensures proper rendering and touch zooming on mobile devices -->
+        <title>Welcome</title> <!-- Title of the web page -->
+        <!-- Bootstrap CSS-->
+        <link
+            href="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css"
+            rel="stylesheet"
+        /> <!-- Link to Bootstrap CSS for styling -->
+    </head>
+    <body>
+        <div class="container text-center mt-5"> <!-- Container for centering content with margin-top -->
+            <!--Title-->
+            <h1>Sign Up Page</h1> <!-- Main title of the page -->
+            
+            <!--Logo-->
+            <img
+                src="{{ url_for('static', filename='logo.png') }}"
+                alt="logo"
+                class="mb-4"
+                style="width: 150px;"
+            /> <!-- Logo image with margin-bottom and fixed width -->
+        
+            <!--Buttons-->
+            <div class="mt-4"> <!-- Container for buttons with margin-top -->
+                <a href="{{ url_for('login') }}" class="btn btn-primary mx-2">Login</a> <!-- Login button with margin-x -->
+                <a href="{{ url_for('signup') }}" class="btn btn-success mx-2">Sign Up</a>
+            </div>
+        </div>
+    </body>
+</html>
+
