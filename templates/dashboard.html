@@ -14,7 +14,28 @@
     </style>
 </head>
 <body>
-      Test
+    <div class="container mt-5">
+        <div class="row">
+            <div class="col-md-12">
+                <!-- Removed the top 2 buttons -->
+            </div>
+        </div>
+    </div>
+    <div class="container mt-5">
+        <div class="row">
+            <div class="col-md-12">
+                <h1 class="text-center">To-Do Page</h1>
+            </div>
+        </div>
+        <div class="row">
+            <div class="col-md-12 d-flex flex-column">
+                <button class="btn btn-primary mb-3" id="addTaskBtn">Add Task</button>
+                <button class="btn btn-success mb-3" id="submitTaskBtn">Submit Task</button>
+                <a href="{{ url_for('login') }}" class="btn btn-primary mx-2">Logout</a> <!-- Login button with margin-x -->
+            </div>
+        </div>
     </div>
 </body>
 </html>
+
+
