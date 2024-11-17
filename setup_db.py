@@ -27,36 +27,35 @@ class ToDo(Base):
 
 # # Database setup
 engine = create_engine('sqlite:///todo.db')
-# Base.metadata.create_all(engine)
-# print("Database and tables created successfully")
 
-
-
-
-
+# Create the tables in the database (uncommented)
+Base.metadata.create_all(engine)  # This creates the tables in the database
+print("Database and tables created successfully")
 
 # Create a new session
 Session = sessionmaker(bind=engine)
 session = Session()
 
-# Insert users with hashed password
-user1 = User(username='john_doe', password=generate_password_hash('password123'))
-user2 = User(username='jane_doe', password=generate_password_hash('mypassword'))
+# # Insert users with hashed password
+# user1 = User(username='john_doe', password=generate_password_hash('password123'))
+# user2 = User(username='jane_doe', password=generate_password_hash('mypassword'))
 
-session.add(user1)
-session.add(user2)
-session.commit()
+# session.add(user1)
+# session.add(user2)
+# session.commit()
 
-# Insert tasks
-task1 = ToDo(task='Learn SQL Alchemy', done=False, user_id=user1.id)
-task2 = ToDo(task='Build an app', done=False, user_id=user2.id)
+# # Insert tasks
+# task1 = ToDo(task='Learn SQL Alchemy', done=False, user_id=user1.id)
+# task2 = ToDo(task='Build an app', done=False, user_id=user2.id)
 
-session.add(task1)
-session.add(task2)
-session.commit()
+# session.add(task1)
+# session.add(task2)
+# session.commit()
 
 print("Users and tasks added successfully")
 
+if __name__=="__main__":
+    print("This is the setup_db.py file") 
     
 
 
