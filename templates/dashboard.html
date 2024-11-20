@@ -11,6 +11,15 @@
             justify-content: space-between;
             align-items: center;
         }
+        .btn-custom {
+            padding: 10px 20px;
+            font-size: 16px;
+        }
+        .btn-logout {
+            background-color: red;
+            border-color: red;
+            color: white;
+        }
     </style>
 </head>
 <body>
@@ -29,13 +38,27 @@
         </div>
         <div class="row">
             <div class="col-md-12 d-flex flex-column">
-                <button class="btn btn-primary mb-3" id="addTaskBtn">Add Task</button>
-                <button class="btn btn-success mb-3" id="submitTaskBtn">Submit Task</button>
-                <a href="{{ url_for('login') }}" class="btn btn-primary mx-2">Logout</a> <!-- Login button with margin-x -->
+                <a href="{{ url_for('dashboard') }}" class="btn btn-primary mb-3 btn-custom" id="addTaskBtn">Add Task</a>
+                <a href="{{ url_for('logout') }}" class="btn btn-logout btn-custom mx-2">Logout</a> <!-- Logout button with margin-x -->
+            </div>
+        </div>
+    </div>
+    <div class="container mt-5">
+        <div class="row">
+            <div class="col-md-12">
+                <ul class="list-group">
+                    {% for todo in todos %}
+                        <li class="list-group-item">
+                            <span>{{ todo.task }}</span>
+                            <span>
+                                <button class="btn btn-sm btn-warning">Edit</button>
+                                <button class="btn btn-sm btn-danger">Delete</button>
+                            </span>
+                        </li>
+                    {% endfor %}
+                </ul>
             </div>
         </div>
     </div>
 </body>
 </html>
-
-

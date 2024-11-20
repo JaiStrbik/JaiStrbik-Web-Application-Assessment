@@ -59,7 +59,24 @@ def dashboard():
     if "user_id" not in session:
         flash("Please log in to access this dashboard", "warning")
         return redirect(url_for('login'))
-    return render_template("dashboard.html", user_id=session["user_id"], username=session["username"])
+    user_id = session["user_id"]
+    todos = db_session.query(ToDo).filter_by(user_id=user_id).all()
+    username = session.get("username", "Guest")
+    return render_template("dashboard.html", user_id=user_id, username=username, todos=todos)
+
+@app.route('/add_task', methods=['GET', 'POST'])
+def add_task_page():
+    if "user_id" not in session:
+        flash("Please log in to add a task", "warning")
+        return redirect(url_for('login'))
+    if request.method == "POST":
+        task_content = request.form.get('content')
+        new_task = ToDo(content=task_content, user_id=session['user_id'])
+        db_session.add(new_task)
+        db_session.commit()
+        flash("Task added successfully", "info")
+        return redirect(url_for('dashboard'))
+    return render_template('add_task.html')
 
 @app.route('/logout')
 def logout():
@@ -69,6 +86,8 @@ def logout():
 
 if __name__ == "__main__":
     app.run(debug=True)
+    
+
 
 
 
