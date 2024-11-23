@@ -1,18 +1,10 @@
-from flask import Flask, render_template, request, redirect, url_for, session, flash
-from werkzeug.security import check_password_hash
-from sqlalchemy import create_engine
-from sqlalchemy.orm import sessionmaker
-from sqlalchemy.exc import IntegrityError  # Import IntegrityError
-from setup_db import User, ToDo  # Import the User model
+from flask import Flask, request, redirect, url_for, render_template, session, flash
+from setup_db import User, ToDo, db_session
+from werkzeug.security import generate_password_hash, check_password_hash
+from sqlalchemy.exc import IntegrityError
 
 app = Flask(__name__)
-app.secret_key = "supersecretkey"  # Secure key for session security
-
-# Database setup
-engine = create_engine('sqlite:///todo.db')  # Database connection
-Session = sessionmaker(bind=engine)
-db_session = Session()
-
+app.secret_key = 'your_secret_key'
 
 @app.route('/')
 def index():
@@ -24,12 +16,11 @@ def login():
         username = request.form.get('username')
         password = request.form.get('password')
 
-        user = db_session.query(User).filter_by(username=username).first()
+        user = db_session.query(User).filter(User.username == username).first()
         
         if user and check_password_hash(user.password, password):
             session['user_id'] = user.id
-            session['username'] = user.username  # Set username in session
-            flash("You have successfully logged in", "info")
+            flash("Login successful!", "info")
             return redirect(url_for('dashboard'))
         else:
             flash("Invalid username or password", "error")
@@ -41,42 +32,85 @@ def signup():
     if request.method == "POST":
         username = request.form.get('username')
         password = request.form.get('password')
+        hashed_password = generate_password_hash(password, method='pbkdf2:sha256')
         
-        new_user = User(username=username, password=password)
+        new_user = User(username=username, password=hashed_password)
         try:
             db_session.add(new_user)
             db_session.commit()
-            flash("Registration successful. Please log in.", "info")
+            flash("Signup successful! Please log in.", "info")
             return redirect(url_for('login'))
         except IntegrityError:
             db_session.rollback()
             flash("Username already exists. Please choose a different username.", "error")
+        except Exception as e:
+            db_session.rollback()
+            flash(f"An error occurred: {str(e)}", "error")
             
     return render_template('signup.html')
 
-@app.route('/dashboard')
-def dashboard():
-    if "user_id" not in session:
-        flash("Please log in to access this dashboard", "warning")
-        return redirect(url_for('login'))
-    user_id = session["user_id"]
-    todos = db_session.query(ToDo).filter_by(user_id=user_id).all()
-    username = session.get("username", "Guest")
-    return render_template("dashboard.html", user_id=user_id, username=username, todos=todos)
-
 @app.route('/add_task', methods=['GET', 'POST'])
-def add_task_page():
+def add_task():
     if "user_id" not in session:
         flash("Please log in to add a task", "warning")
         return redirect(url_for('login'))
     if request.method == "POST":
-        task_content = request.form.get('content')
-        new_task = ToDo(content=task_content, user_id=session['user_id'])
-        db_session.add(new_task)
-        db_session.commit()
-        flash("Task added successfully", "info")
+        task_name = request.form.get('taskName')
+        task_description = request.form.get('taskDescription')
+        task_category = request.form.get('taskCategory')
+        new_task = ToDo(name=task_name, description=task_description, category=task_category, user_id=session['user_id'], completed=False)
+        try:
+            db_session.add(new_task)
+            db_session.commit()
+            flash("Task added successfully", "info")
+        except Exception as e:
+            db_session.rollback()
+            flash(f"An error occurred: {str(e)}", "error")
         return redirect(url_for('dashboard'))
     return render_template('add_task.html')
+
+@app.route('/dashboard')
+def dashboard():
+    if "user_id" not in session:
+        flash("Please log in to view the dashboard", "warning")
+        return redirect(url_for('login'))
+    tasks = db_session.query(ToDo).filter_by(user_id=session['user_id']).all()
+    return render_template('dashboard.html', tasks=tasks)
+
+@app.route('/edit_task/<int:task_id>', methods=['GET', 'POST'])
+def edit_task(task_id):
+    if "user_id" not in session:
+        flash("Please log in to edit a task", "warning")
+        return redirect(url_for('login'))
+    task = db_session.query(ToDo).filter_by(id=task_id, user_id=session['user_id']).first()
+    if request.method == "POST":
+        task.name = request.form.get('taskName')
+        task.description = request.form.get('taskDescription')
+        task.category = request.form.get('taskCategory')
+        task.completed = 'completed' in request.form
+        try:
+            db_session.commit()
+            flash("Task updated successfully", "info")
+        except Exception as e:
+            db_session.rollback()
+            flash(f"An error occurred: {str(e)}", "error")
+        return redirect(url_for('dashboard'))
+    return render_template('edit_task.html', task=task)
+
+@app.route('/delete_task/<int:task_id>', methods=['POST'])
+def delete_task(task_id):
+    if "user_id" not in session:
+        flash("Please log in to delete a task", "warning")
+        return redirect(url_for('login'))
+    task = db_session.query(ToDo).filter_by(id=task_id, user_id=session['user_id']).first()
+    try:
+        db_session.delete(task)
+        db_session.commit()
+        flash("Task deleted successfully", "info")
+    except Exception as e:
+        db_session.rollback()
+        flash(f"An error occurred: {str(e)}", "error")
+    return redirect(url_for('dashboard'))
 
 @app.route('/logout')
 def logout():
@@ -86,7 +120,6 @@ def logout():
 
 if __name__ == "__main__":
     app.run(debug=True)
-    
 
 
 

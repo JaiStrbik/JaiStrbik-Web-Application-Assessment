@@ -4,32 +4,51 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Dashboard</title>
-    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
     <style>
-        .list-group-item {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
+        body {
+            font-family: Arial, sans-serif;
+            background-color: #f2f2f2;
+        }
+        .flashes {
+            list-style-type: none;
+            padding: 0;
+        }
+        .flashes li {
+            padding: 10px;
+            margin-bottom: 10px;
+        }
+        .flashes .info {
+            background-color: blue;
+            color: white;
+        }
+        .flashes .warning {
+            background-color: orange;
+            color: white;
+        }
+        .flashes .error {
+            background-color: red;
+            color: white;
         }
         .btn-custom {
-            padding: 10px 20px;
-            font-size: 16px;
+            margin-bottom: 10px;
         }
         .btn-logout {
             background-color: red;
-            border-color: red;
             color: white;
         }
     </style>
 </head>
 <body>
-    <div class="container mt-5">
-        <div class="row">
-            <div class="col-md-12">
-                <!-- Removed the top 2 buttons -->
-            </div>
-        </div>
-    </div>
+    <h1>Task Dashboard</h1>
+    {% with messages = get_flashed_messages(with_categories=true) %}
+        {% if messages %}
+            <ul class="flashes">
+                {% for category, message in messages %}
+                    <li class="{{ category }}">{{ message }}</li>
+                {% endfor %}
+            </ul>
+        {% endif %}
+    {% endwith %}
     <div class="container mt-5">
         <div class="row">
             <div class="col-md-12">
@@ -38,8 +57,8 @@
         </div>
         <div class="row">
             <div class="col-md-12 d-flex flex-column">
-                <a href="{{ url_for('dashboard') }}" class="btn btn-primary mb-3 btn-custom" id="addTaskBtn">Add Task</a>
-                <a href="{{ url_for('logout') }}" class="btn btn-logout btn-custom mx-2">Logout</a> <!-- Logout button with margin-x -->
+                <a href="{{ url_for('add_task') }}" class="btn btn-primary mb-3 btn-custom" id="addTaskBtn">Add Task</a>
+                <a href="{{ url_for('logout') }}" class="btn btn-logout btn-custom mx-2">Logout</a>
             </div>
         </div>
     </div>
@@ -47,12 +66,14 @@
         <div class="row">
             <div class="col-md-12">
                 <ul class="list-group">
-                    {% for todo in todos %}
+                    {% for task in tasks %}
                         <li class="list-group-item">
-                            <span>{{ todo.task }}</span>
+                            <span>{{ task.name }}</span>: <span>{{ task.description }}</span> - <span>{{ task.category }}</span>
                             <span>
-                                <button class="btn btn-sm btn-warning">Edit</button>
-                                <button class="btn btn-sm btn-danger">Delete</button>
+                                <a href="{{ url_for('edit_task', task_id=task.id) }}" class="btn btn-sm btn-warning">Edit</a>
+                                <form action="{{ url_for('delete_task', task_id=task.id) }}" method="POST" style="display:inline;">
+                                    <button type="submit" class="btn btn-sm btn-danger">Delete</button>
+                                </form>
                             </span>
                         </li>
                     {% endfor %}

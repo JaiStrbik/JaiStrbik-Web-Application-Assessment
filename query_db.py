@@ -1,6 +1,6 @@
 from sqlalchemy.orm import sessionmaker
 from sqlalchemy import create_engine
-from setup_db import User
+from setup_db import User, ToDo
 from werkzeug.security import generate_password_hash, check_password_hash
 
 # Connect to the database
@@ -13,17 +13,10 @@ users = session.query(User).all()
 for user in users:
     print(f"User: {user.username}")
     for todo in user.todos:
-        print(f' - Task: {todo.task}, Done: {todo.done}') 
+        print(f' - Task: {todo.name}, Done: {todo.completed}') 
 
 # Example usage of password hashing
-hashed_password = generate_password_hash('password123')
+hashed_password = generate_password_hash('password123', method='pbkdf2:sha256')
 print(f"Hashed Password: {hashed_password}")
-
-# Example user login check
-user = session.query(User).filter_by(username='john_doe').first()
-if user and check_password_hash(user.password, 'password123'):  # Check stored password hash
-    print("Login successful")
-else:
-    print("Invalid credentials")
 
 session.close()  # Close session after everything is done
