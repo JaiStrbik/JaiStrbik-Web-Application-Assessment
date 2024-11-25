@@ -2,6 +2,7 @@ from flask import Flask, request, redirect, url_for, render_template, session, f
 from setup_db import User, ToDo, db_session
 from werkzeug.security import generate_password_hash, check_password_hash
 from sqlalchemy.exc import IntegrityError
+from datetime import datetime
 
 app = Flask(__name__)
 app.secret_key = 'your_secret_key'
@@ -58,7 +59,20 @@ def add_task():
         task_name = request.form.get('taskName')
         task_description = request.form.get('taskDescription')
         task_category = request.form.get('taskCategory')
-        new_task = ToDo(name=task_name, description=task_description, category=task_category, user_id=session['user_id'], completed=False)
+        due_date = request.form.get('dueDate')
+        due_time = request.form.get('dueTime')
+        
+        if not due_date or not due_time:
+            flash("Due date and time are required", "error")
+            return redirect(url_for('add_task'))
+        
+        try:
+            due_datetime = datetime.strptime(f"{due_date} {due_time}", "%Y-%m-%d %H:%M")
+        except ValueError:
+            flash("Invalid date or time format", "error")
+            return redirect(url_for('add_task'))
+        
+        new_task = ToDo(name=task_name, description=task_description, category=task_category, user_id=session['user_id'], completed=False, due_date=due_datetime)
         try:
             db_session.add(new_task)
             db_session.commit()
@@ -74,8 +88,48 @@ def dashboard():
     if "user_id" not in session:
         flash("Please log in to view the dashboard", "warning")
         return redirect(url_for('login'))
-    tasks = db_session.query(ToDo).filter_by(user_id=session['user_id']).all()
+    tasks = db_session.query(ToDo).filter_by(user_id=session['user_id'], completed=False).all()
     return render_template('dashboard.html', tasks=tasks)
+
+@app.route('/completed_tasks')
+def view_completed_tasks():
+    if "user_id" not in session:
+        flash("Please log in to view completed tasks", "warning")
+        return redirect(url_for('login'))
+    tasks = db_session.query(ToDo).filter_by(user_id=session['user_id'], completed=True).all()
+    return render_template('completed_tasks.html', tasks=tasks)
+
+@app.route('/complete_task/<int:task_id>', methods=['POST'])
+def complete_task(task_id):
+    if "user_id" not in session:
+        flash("Please log in to complete a task", "warning")
+        return redirect(url_for('login'))
+    task = db_session.query(ToDo).filter_by(id=task_id, user_id=session['user_id']).first()
+    if task:
+        task.completed = True
+        try:
+            db_session.commit()
+            flash("Task marked as completed", "info")
+        except Exception as e:
+            db_session.rollback()
+            flash(f"An error occurred: {str(e)}", "error")
+    return redirect(url_for('dashboard'))
+
+@app.route('/uncomplete_task/<int:task_id>', methods=['POST'])
+def uncomplete_task(task_id):
+    if "user_id" not in session:
+        flash("Please log in to uncomplete a task", "warning")
+        return redirect(url_for('login'))
+    task = db_session.query(ToDo).filter_by(id=task_id, user_id=session['user_id']).first()
+    if task:
+        task.completed = False
+        try:
+            db_session.commit()
+            flash("Task marked as not completed", "info")
+        except Exception as e:
+            db_session.rollback()
+            flash(f"An error occurred: {str(e)}", "error")
+    return redirect(url_for('view_completed_tasks'))
 
 @app.route('/edit_task/<int:task_id>', methods=['GET', 'POST'])
 def edit_task(task_id):
@@ -88,6 +142,19 @@ def edit_task(task_id):
         task.description = request.form.get('taskDescription')
         task.category = request.form.get('taskCategory')
         task.completed = 'completed' in request.form
+        due_date = request.form.get('dueDate')
+        due_time = request.form.get('dueTime')
+        
+        if not due_date or not due_time:
+            flash("Due date and time are required", "error")
+            return redirect(url_for('edit_task', task_id=task_id))
+        
+        try:
+            task.due_date = datetime.strptime(f"{due_date} {due_time}", "%Y-%m-%d %H:%M")
+        except ValueError:
+            flash("Invalid date or time format", "error")
+            return redirect(url_for('edit_task', task_id=task_id))
+        
         try:
             db_session.commit()
             flash("Task updated successfully", "info")

@@ -1,4 +1,4 @@
-from sqlalchemy import create_engine, Column, Integer, String, Boolean, ForeignKey
+from sqlalchemy import create_engine, Column, Integer, String, Boolean, ForeignKey, DateTime
 from sqlalchemy.ext.declarative import declarative_base
 from sqlalchemy.orm import relationship, sessionmaker, scoped_session
 
@@ -21,5 +21,6 @@ class ToDo(Base):
     category = Column(String, nullable=False)
     user_id = Column(Integer, ForeignKey('users.id'), nullable=False)
     completed = Column(Boolean, default=False)
+    due_date = Column(DateTime, nullable=False)
 
 Base.metadata.create_all(bind=engine)
