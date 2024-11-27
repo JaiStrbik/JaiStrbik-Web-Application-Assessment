@@ -17,9 +17,6 @@ def index():
 
 @app.route('/login', methods=['GET', 'POST'])
 def login():
-    if 'user_id' in session:
-        return redirect(url_for('dashboard'))
-        
     if request.method == "POST":
         username = request.form.get('username')
         password = request.form.get('password')
@@ -95,8 +92,16 @@ def dashboard():
     if "user_id" not in session:
         flash("Please log in to view the dashboard", "warning")
         return redirect(url_for('login'))
+    
+    current_time = datetime.now()
     tasks = db_session.query(ToDo).filter_by(user_id=session['user_id'], completed=False).all()
-    return render_template('dashboard.html', tasks=tasks)
+    completed_tasks = db_session.query(ToDo).filter_by(user_id=session['user_id'], completed=True).all()
+    overdue_tasks = [task for task in tasks if task.due_date < current_time]
+    
+    return render_template('dashboard.html', 
+                         tasks=tasks,
+                         completed_tasks=completed_tasks,
+                         overdue_tasks=overdue_tasks)
 
 @app.route('/completed_tasks')
 def view_completed_tasks():

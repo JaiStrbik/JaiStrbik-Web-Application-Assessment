@@ -3,31 +3,69 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Welcome</title>
+    <title>Task Manager - Organize Your Work</title>
     <link href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css" rel="stylesheet">
-    <style>
-        body {
-            font-family: Arial, sans-serif;
-            background-color: #f8f9fa;
-        }
-        .container {
-            padding-top: 70px; /* Add padding to ensure content is not hidden behind the navbar */
-        }
-    </style>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/main.css') }}">
 </head>
 <body>
-    <div class="container">
-        <div class="row">
-            <div class="col-md-12">
-                <h1 class="text-center">Welcome to the Task Manager</h1>
-                <p class="text-center">Please log in to manage your tasks.</p>
-                <div class="text-center">
-                    <a href="{{ url_for('login') }}" class="btn btn-primary">Login</a>
-                    <a href="{{ url_for('signup') }}" class="btn btn-secondary">Sign Up</a>
+    <nav class="navbar navbar-expand-lg navbar-light fixed-top">
+        <div class="container">
+            <a class="navbar-brand" href="#">Task Manager</a>
+            <div class="ml-auto">
+                <a href="{{ url_for('login') }}" class="btn btn-outline-primary mr-2">Login</a>
+                <a href="{{ url_for('signup') }}" class="btn btn-primary">Get Started</a>
+            </div>
+        </div>
+    </nav>
+
+    <section class="hero">
+        <div class="container">
+            <div class="row align-items-center">
+                <div class="col-lg-6">
+                    <h1 class="hero-title">Manage Tasks with Confidence</h1>
+                    <p class="hero-subtitle">Stay organized, meet deadlines, and achieve your goals with our powerful task management solution.</p>
+                    <div class="hero-buttons">
+                        <a href="{{ url_for('signup') }}" class="btn btn-primary btn-lg">Start Free</a>
+                        <a href="#features" class="btn btn-outline-light btn-lg ml-3">Learn More</a>
+                    </div>
+                </div>
+                <div class="col-lg-6">
+                    <img src="{{ url_for('static', filename='img/hero-image.svg') }}" alt="Task Management" class="hero-image">
                 </div>
             </div>
         </div>
-    </div>
+    </section>
+
+    <section id="features" class="features">
+        <div class="container">
+            <h2 class="section-title text-center">Why Choose Our Task Manager?</h2>
+            <div class="row mt-5">
+                <div class="col-md-4">
+                    <div class="feature-card">
+                        <div class="feature-icon">📋</div>
+                        <h3>Easy Organization</h3>
+                        <p>Organize tasks by categories and priorities to stay focused on what matters most.</p>
+                    </div>
+                </div>
+                <div class="col-md-4">
+                    <div class="feature-card">
+                        <div class="feature-icon">⏰</div>
+                        <h3>Deadline Tracking</h3>
+                        <p>Never miss a deadline with our intuitive due date management system.</p>
+                    </div>
+                </div>
+                <div class="col-md-4">
+                    <div class="feature-card">
+                        <div class="feature-icon">📊</div>
+                        <h3>Progress Insights</h3>
+                        <p>Track your productivity with detailed progress reports and statistics.</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
     <script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/popper.js@1.16.1/dist/umd/popper.min.js"></script>
     <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>

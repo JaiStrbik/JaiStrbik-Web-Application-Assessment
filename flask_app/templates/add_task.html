@@ -1,99 +1,86 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Add Task</title>
-    <link href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css" rel="stylesheet">
-    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/flatpickr/dist/flatpickr.min.css">
-    <style>
-        .form-container {
-            max-width: 700px;
-            margin: 0 auto;
-            padding: 2rem;
-            background: white;
-            border-radius: 10px;
-            box-shadow: 0 0 20px rgba(0,0,0,0.1);
-        }
-        .form-group label {
-            font-weight: 600;
-            color: #333;
-            margin-bottom: 0.5rem;
-        }
-        .form-control {
-            border-radius: 5px;
-            border: 1px solid #ddd;
-            padding: 0.75rem;
-        }
-        .form-control:focus {
-            border-color: #4a90e2;
-            box-shadow: 0 0 0 0.2rem rgba(74,144,226,0.25);
-        }
-        .btn-toolbar {
-            margin-top: 2rem;
-        }
-        .flatpickr-input {
-            background-color: white !important;
-        }
-    </style>
-</head>
-<body class="bg-light">
-    <div class="container mt-5">
-        <div class="form-container">
-            <h1 class="text-center mb-4">Add New Task</h1>
-            <form id="addTaskForm" action="{{ url_for('add_task') }}" method="POST">
-                <div class="form-group">
-                    <label for="taskName">Task Name</label>
-                    <input type="text" id="taskName" name="taskName" class="form-control" required>
-                </div>
-                <div class="form-group">
-                    <label for="taskDescription">Task Description</label>
-                    <textarea id="taskDescription" name="taskDescription" class="form-control" rows="3" required></textarea>
-                </div>
-                <div class="form-group">
-                    <label for="taskCategory">Task Category</label>
-                    <select id="taskCategory" name="taskCategory" class="form-control custom-select" required>
-                        <option value="" disabled selected>Select a category</option>
-                        <option value="Homework">Homework</option>
-                        <option value="Revision">Revision</option>
-                        <option value="Co-curricular">Co-curricular</option>
-                    </select>
-                </div>
-                <div class="form-group">
-                    <label for="priority">Priority</label>
-                    <select class="form-control custom-select" id="priority" name="priority">
-                        <option value="low">Low</option>
-                        <option value="medium" selected>Medium</option>
-                        <option value="high">High</option>
-                    </select>
-                </div>
-                <div class="form-group">
-                    <label for="datetime">Due Date and Time</label>
-                    <input type="text" id="datetime" class="form-control" placeholder="Select date and time" required>
-                    <input type="hidden" id="dueDate" name="dueDate">
-                    <input type="hidden" id="dueTime" name="dueTime">
-                </div>
-                <div class="btn-toolbar">
-                    <button type="submit" class="btn btn-primary mr-2">Add Task</button>
-                    <a href="{{ url_for('dashboard') }}" class="btn btn-secondary">Back to Dashboard</a>
-                </div>
-            </form>
-        </div>
-    </div>
+{% extends "base.html" %}
 
-    <script src="https://cdn.jsdelivr.net/npm/flatpickr"></script>
-    <script>
-        flatpickr("#datetime", {
-            enableTime: true,
-            dateFormat: "Y-m-d H:i",
-            minDate: "today",
-            time_24hr: true,
-            onChange: function(selectedDates, dateStr, instance) {
-                const date = selectedDates[0];
-                document.getElementById('dueDate').value = date.toISOString().split('T')[0];
-                document.getElementById('dueTime').value = date.toTimeString().split(' ')[0].substring(0, 5);
-            }
-        });
-    </script>
-</body>
-</html>
+{% block title %}Add Task{% endblock %}
+
+{% block content %}
+<div class="form-container">
+    <h1 class="form-title">Add New Task</h1>
+    <form id="addTaskForm" action="{{ url_for('add_task') }}" method="POST">
+        <div class="form-group">
+            <label for="taskName">Task Name</label>
+            <input type="text" id="taskName" name="taskName" class="form-control" required>
+        </div>
+        
+        <div class="form-group">
+            <label for="taskDescription">Task Description</label>
+            <textarea id="taskDescription" name="taskDescription" class="form-control" rows="3" required></textarea>
+        </div>
+        
+        <div class="form-grid">
+            <div class="form-group">
+                <label for="taskCategory">Task Category</label>
+                <select id="taskCategory" name="taskCategory" class="form-control custom-select" required>
+                    <option value="" disabled selected>Select a category</option>
+                    <optgroup label="Academic">
+                        <option value="Assignment">Assignment</option>
+                        <option value="Homework">Homework</option>
+                        <option value="Project">Project</option>
+                        <option value="Research">Research</option>
+                        <option value="Revision">Revision</option>
+                        <option value="Study">Study</option>
+                    </optgroup>
+                    <optgroup label="Extra-curricular">
+                        <option value="Club">Club Activity</option>
+                        <option value="Sports">Sports</option>
+                        <option value="Volunteer">Volunteer Work</option>
+                    </optgroup>
+                    <optgroup label="Personal">
+                        <option value="Health">Health</option>
+                        <option value="Meeting">Meeting</option>
+                        <option value="Other">Other</option>
+                    </optgroup>
+                </select>
+            </div>
+            
+            <div class="form-group">
+                <label for="priority">Priority Level</label>
+                <select class="form-control custom-select" id="priority" name="priority">
+                    <option value="low">Low Priority</option>
+                    <option value="medium" selected>Medium Priority</option>
+                    <option value="high">High Priority</option>
+                </select>
+            </div>
+        </div>
+
+        <div class="form-group datetime-wrapper">
+            <label class="datetime-label">Due Date and Time</label>
+            <input type="text" id="datetime" class="flatpickr-input" placeholder="Select date and time..." required>
+            <input type="hidden" id="dueDate" name="dueDate">
+            <input type="hidden" id="dueTime" name="dueTime">
+        </div>
+
+        <div class="form-actions">
+            <button type="submit" class="btn btn-primary">Create Task</button>
+            <a href="{{ url_for('dashboard') }}" class="btn btn-secondary">Cancel</a>
+        </div>
+    </form>
+</div>
+
+<script src="https://cdn.jsdelivr.net/npm/flatpickr"></script>
+<script>
+    flatpickr("#datetime", {
+        enableTime: true,
+        dateFormat: "Y-m-d H:i",
+        minDate: "today",
+        time_24hr: true,
+        defaultHour: 12,
+        minuteIncrement: 15,
+        theme: "material_blue",
+        onChange: function(selectedDates, dateStr, instance) {
+            const date = selectedDates[0];
+            document.getElementById('dueDate').value = date.toISOString().split('T')[0];
+            document.getElementById('dueTime').value = date.toTimeString().split(' ')[0].substring(0, 5);
+        }
+    });
+</script>
+{% endblock %}

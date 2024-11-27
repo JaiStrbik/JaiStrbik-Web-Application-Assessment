@@ -1,42 +1,82 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Edit Task</title>
-    <link href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css" rel="stylesheet">
-</head>
-<body>
-    <div class="container mt-5">
-        <h1>Edit Task</h1>
+{% extends "base.html" %}
+
+{% block title %}Edit Task | Task Manager{% endblock %}
+
+{% block content %}
+<div class="container mt-5">
+    <div class="form-container">
+        <h1 class="text-center mb-4">Edit Task</h1>
         <form id="editTaskForm" action="{{ url_for('edit_task', task_id=task.id) }}" method="POST">
             <div class="form-group">
-                <label for="taskName">Task Name:</label>
-                <input type="text" id="taskName" name="taskName" value="{{ task.name }}" required class="form-control"><br><br>
-                
-                <label for="taskDescription">Task Description:</label>
-                <textarea id="taskDescription" name="taskDescription" required class="form-control">{{ task.description }}</textarea><br><br>
-                
-                <label for="taskCategory">Task Category:</label>
-                <select id="taskCategory" name="taskCategory" required class="form-control">
+                <label for="taskName">Task Name</label>
+                <input type="text" id="taskName" name="taskName" class="form-control" value="{{ task.name }}" required>
+            </div>
+            
+            <div class="form-group">
+                <label for="taskDescription">Task Description</label>
+                <textarea id="taskDescription" name="taskDescription" class="form-control" rows="3" required>{{ task.description }}</textarea>
+            </div>
+            
+            <div class="form-group">
+                <label for="taskCategory">Task Category</label>
+                <select id="taskCategory" name="taskCategory" class="form-control custom-select" required>
                     <option value="Homework" {% if task.category == 'Homework' %}selected{% endif %}>Homework</option>
                     <option value="Revision" {% if task.category == 'Revision' %}selected{% endif %}>Revision</option>
                     <option value="Co-curricular" {% if task.category == 'Co-curricular' %}selected{% endif %}>Co-curricular</option>
-                </select><br><br>
-                
-                <label for="dueDate">Due Date:</label>
-                <input type="date" id="dueDate" name="dueDate" value="{{ task.due_date.strftime('%Y-%m-%d') }}" required class="form-control"><br><br>
-                
-                <label for="dueTime">Due Time:</label>
-                <input type="time" id="dueTime" name="dueTime" value="{{ task.due_date.strftime('%H:%M') }}" required class="form-control"><br><br>
-                
-                <label for="completed">Completed:</label>
-                <input type="checkbox" id="completed" name="completed" {% if task.completed %}checked{% endif %} class="form-check-input"><br><br>
-                
-                <button type="submit" class="btn btn-primary">Update Task</button>
+                </select>
+            </div>
+
+            <div class="datetime-wrapper">
+                <div class="form-group">
+                    <label class="datetime-label">Due Date and Time</label>
+                    <input type="text" id="datetime" class="flatpickr-input" 
+                           value="{{ task.due_date.strftime('%Y-%m-%d %H:%M') }}" required>
+                    <input type="hidden" id="dueDate" name="dueDate">
+                    <input type="hidden" id="dueTime" name="dueTime">
+                </div>
+            </div>
+
+            <div class="form-group">
+                <div class="custom-control custom-checkbox">
+                    <input type="checkbox" class="custom-control-input" id="completed" name="completed" 
+                           {% if task.completed %}checked{% endif %}>
+                    <label class="custom-control-label" for="completed">Mark as completed</label>
+                </div>
+            </div>
+
+            <div class="btn-toolbar">
+                <button type="submit" class="btn btn-primary mr-2">Update Task</button>
+                <a href="{{ url_for('dashboard') }}" class="btn btn-secondary">Back to Dashboard</a>
             </div>
         </form>
-        <a href="{{ url_for('dashboard') }}" class="btn btn-secondary mt-3">Back to Dashboard</a>
     </div>
-</body>
-</html>
+</div>
+
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/flatpickr/dist/flatpickr.min.css">
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/flatpickr/dist/themes/material_blue.css">
+<script src="https://cdn.jsdelivr.net/npm/flatpickr"></script>
+<script>
+    flatpickr("#datetime", {
+        enableTime: true,
+        dateFormat: "Y-m-d H:i",
+        minDate: "today",
+        time_24hr: true,
+        defaultHour: 12,
+        minuteIncrement: 15,
+        theme: "material_blue",
+        onChange: function(selectedDates, dateStr, instance) {
+            const date = selectedDates[0];
+            document.getElementById('dueDate').value = date.toISOString().split('T')[0];
+            document.getElementById('dueTime').value = date.toTimeString().split(' ')[0].substring(0, 5);
+        }
+    });
+
+    // Set initial values for hidden fields
+    const initialDate = document.getElementById('datetime').value;
+    if (initialDate) {
+        const date = new Date(initialDate);
+        document.getElementById('dueDate').value = date.toISOString().split('T')[0];
+        document.getElementById('dueTime').value = date.toTimeString().split(' ')[0].substring(0, 5);
+    }
+</script>
+{% endblock %}
