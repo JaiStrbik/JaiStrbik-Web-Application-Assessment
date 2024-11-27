@@ -1,0 +1,91 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Add Task</title>
+    <link href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/flatpickr/dist/flatpickr.min.css">
+    <style>
+        .form-container {
+            max-width: 700px;
+            margin: 0 auto;
+            padding: 2rem;
+            background: white;
+            border-radius: 10px;
+            box-shadow: 0 0 20px rgba(0,0,0,0.1);
+        }
+        .form-group label {
+            font-weight: 600;
+            color: #333;
+            margin-bottom: 0.5rem;
+        }
+        .form-control {
+            border-radius: 5px;
+            border: 1px solid #ddd;
+            padding: 0.75rem;
+        }
+        .form-control:focus {
+            border-color: #4a90e2;
+            box-shadow: 0 0 0 0.2rem rgba(74,144,226,0.25);
+        }
+        .btn-toolbar {
+            margin-top: 2rem;
+        }
+        .flatpickr-input {
+            background-color: white !important;
+        }
+    </style>
+</head>
+<body class="bg-light">
+    <div class="container mt-5">
+        <div class="form-container">
+            <h1 class="text-center mb-4">Add New Task</h1>
+            <form id="addTaskForm" action="{{ url_for('add_task') }}" method="POST">
+                <div class="form-group">
+                    <label for="taskName">Task Name</label>
+                    <input type="text" id="taskName" name="taskName" class="form-control" required>
+                </div>
+                <div class="form-group">
+                    <label for="taskDescription">Task Description</label>
+                    <textarea id="taskDescription" name="taskDescription" class="form-control" rows="3" required></textarea>
+                </div>
+                <div class="form-group">
+                    <label for="taskCategory">Task Category</label>
+                    <select id="taskCategory" name="taskCategory" class="form-control custom-select" required>
+                        <option value="" disabled selected>Select a category</option>
+                        <option value="Homework">Homework</option>
+                        <option value="Revision">Revision</option>
+                        <option value="Co-curricular">Co-curricular</option>
+                    </select>
+                </div>
+                <div class="form-group">
+                    <label for="datetime">Due Date and Time</label>
+                    <input type="text" id="datetime" class="form-control" placeholder="Select date and time" required>
+                    <input type="hidden" id="dueDate" name="dueDate">
+                    <input type="hidden" id="dueTime" name="dueTime">
+                </div>
+                <div class="btn-toolbar">
+                    <button type="submit" class="btn btn-primary mr-2">Add Task</button>
+                    <a href="{{ url_for('dashboard') }}" class="btn btn-secondary">Back to Dashboard</a>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/flatpickr"></script>
+    <script>
+        flatpickr("#datetime", {
+            enableTime: true,
+            dateFormat: "Y-m-d H:i",
+            minDate: "today",
+            time_24hr: true,
+            onChange: function(selectedDates, dateStr, instance) {
+                const date = selectedDates[0];
+                document.getElementById('dueDate').value = date.toISOString().split('T')[0];
+                document.getElementById('dueTime').value = date.toTimeString().split(' ')[0].substring(0, 5);
+            }
+        });
+    </script>
+</body>
+</html>

@@ -1,6 +1,6 @@
 from sqlalchemy.orm import sessionmaker
 from sqlalchemy import create_engine
-from setup_db import User, ToDo
+from flask_app.setup_db import User, ToDo
 from werkzeug.security import generate_password_hash, check_password_hash
 
 # Connect to the database

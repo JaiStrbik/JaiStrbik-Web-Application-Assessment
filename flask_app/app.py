@@ -1,11 +1,27 @@
-from flask import Flask, request, redirect, url_for, render_template, session, flash
+from flask import Flask, request, redirect, url_for, render_template, session, flash, send_from_directory
+import os
 from setup_db import User, ToDo, db_session
 from werkzeug.security import generate_password_hash, check_password_hash
 from sqlalchemy.exc import IntegrityError
 from datetime import datetime
 
-app = Flask(__name__)
+app = Flask(__name__, 
+           static_url_path='/static',  # Serve static files from /static URL
+           static_folder='static')  # Point to static folder
 app.secret_key = 'your_secret_key'
+
+# Remove the custom_static route handler
+# @app.route('/static/<path:filename>')
+# def custom_static(filename):
+#     print(f"Attempting to serve static file: {filename}")  # Debug log
+#     try:
+#         return send_from_directory('static', filename)
+#     except Exception as e:
+#         print(f"Error serving static file: {e}")  # Debug log
+#         return str(e), 404
+
+# Remove any existing static route handlers if present
+# Flask will handle static files automatically
 
 @app.route('/')
 def index():
@@ -26,7 +42,7 @@ def login():
         else:
             flash("Invalid username or password", "error")
             
-    return render_template('login.html')
+    return render_template('login.html', hide_navbar=True)
 
 @app.route('/signup', methods=['GET', 'POST'])
 def signup():
@@ -48,7 +64,7 @@ def signup():
             db_session.rollback()
             flash(f"An error occurred: {str(e)}", "error")
             
-    return render_template('signup.html')
+    return render_template('signup.html', hide_navbar=True)
 
 @app.route('/add_task', methods=['GET', 'POST'])
 def add_task():
@@ -91,13 +107,48 @@ def dashboard():
     tasks = db_session.query(ToDo).filter_by(user_id=session['user_id'], completed=False).all()
     return render_template('dashboard.html', tasks=tasks)
 
+def get_task_statistics(tasks):
+    stats = {
+        'total_completed': len(tasks),
+        'categories': {},
+        'completion_by_month': {},
+    }
+    
+    for task in tasks:
+        # Category stats
+        stats['categories'][task.category] = stats['categories'].get(task.category, 0) + 1
+        # Monthly stats
+        month = task.due_date.strftime('%B %Y')
+        stats['completion_by_month'][month] = stats['completion_by_month'].get(month, 0) + 1
+    
+    return stats
+
 @app.route('/completed_tasks')
 def view_completed_tasks():
     if "user_id" not in session:
         flash("Please log in to view completed tasks", "warning")
         return redirect(url_for('login'))
-    tasks = db_session.query(ToDo).filter_by(user_id=session['user_id'], completed=True).all()
-    return render_template('completed_tasks.html', tasks=tasks)
+    
+    sort_by = request.args.get('sort', 'date_completed')  # default sort by completion date
+    order = request.args.get('order', 'desc')
+    
+    query = db_session.query(ToDo).filter_by(user_id=session['user_id'], completed=True)
+    
+    if sort_by == 'name':
+        query = query.order_by(ToDo.name.desc() if order == 'desc' else ToDo.name)
+    elif sort_by == 'category':
+        query = query.order_by(ToDo.category.desc() if order == 'desc' else ToDo.category)
+    elif sort_by == 'due_date':
+        query = query.order_by(ToDo.due_date.desc() if order == 'desc' else ToDo.due_date)
+    
+    tasks = query.all()
+    stats = get_task_statistics(tasks)
+    
+    return render_template('completed_tasks.html', 
+                         tasks=tasks, 
+                         stats=stats,
+                         sort_by=sort_by, 
+                         order=order)
 
 @app.route('/complete_task/<int:task_id>', methods=['POST'])
 def complete_task(task_id):
@@ -136,7 +187,12 @@ def edit_task(task_id):
     if "user_id" not in session:
         flash("Please log in to edit a task", "warning")
         return redirect(url_for('login'))
+    
     task = db_session.query(ToDo).filter_by(id=task_id, user_id=session['user_id']).first()
+    if not task:
+        flash("Task not found", "error")
+        return redirect(url_for('dashboard'))
+
     if request.method == "POST":
         task.name = request.form.get('taskName')
         task.description = request.form.get('taskDescription')
@@ -169,7 +225,12 @@ def delete_task(task_id):
     if "user_id" not in session:
         flash("Please log in to delete a task", "warning")
         return redirect(url_for('login'))
+    
     task = db_session.query(ToDo).filter_by(id=task_id, user_id=session['user_id']).first()
+    if not task:
+        flash("Task not found", "error")
+        return redirect(url_for('dashboard'))
+
     try:
         db_session.delete(task)
         db_session.commit()
@@ -179,6 +240,10 @@ def delete_task(task_id):
         flash(f"An error occurred: {str(e)}", "error")
     return redirect(url_for('dashboard'))
 
+@app.errorhandler(403)
+def forbidden(e):
+    return render_template('403.html'), 403
+
 @app.route('/logout')
 def logout():
     session.clear()
@@ -186,7 +251,7 @@ def logout():
     return redirect(url_for('login'))
 
 if __name__ == "__main__":
-    app.run(debug=True)
+    app.run(debug=True, host='0.0.0.0', port=5000)
 
 
 

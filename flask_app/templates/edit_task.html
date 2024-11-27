@@ -1,0 +1,42 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Edit Task</title>
+    <link href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css" rel="stylesheet">
+</head>
+<body>
+    <div class="container mt-5">
+        <h1>Edit Task</h1>
+        <form id="editTaskForm" action="{{ url_for('edit_task', task_id=task.id) }}" method="POST">
+            <div class="form-group">
+                <label for="taskName">Task Name:</label>
+                <input type="text" id="taskName" name="taskName" value="{{ task.name }}" required class="form-control"><br><br>
+                
+                <label for="taskDescription">Task Description:</label>
+                <textarea id="taskDescription" name="taskDescription" required class="form-control">{{ task.description }}</textarea><br><br>
+                
+                <label for="taskCategory">Task Category:</label>
+                <select id="taskCategory" name="taskCategory" required class="form-control">
+                    <option value="Homework" {% if task.category == 'Homework' %}selected{% endif %}>Homework</option>
+                    <option value="Revision" {% if task.category == 'Revision' %}selected{% endif %}>Revision</option>
+                    <option value="Co-curricular" {% if task.category == 'Co-curricular' %}selected{% endif %}>Co-curricular</option>
+                </select><br><br>
+                
+                <label for="dueDate">Due Date:</label>
+                <input type="date" id="dueDate" name="dueDate" value="{{ task.due_date.strftime('%Y-%m-%d') }}" required class="form-control"><br><br>
+                
+                <label for="dueTime">Due Time:</label>
+                <input type="time" id="dueTime" name="dueTime" value="{{ task.due_date.strftime('%H:%M') }}" required class="form-control"><br><br>
+                
+                <label for="completed">Completed:</label>
+                <input type="checkbox" id="completed" name="completed" {% if task.completed %}checked{% endif %} class="form-check-input"><br><br>
+                
+                <button type="submit" class="btn btn-primary">Update Task</button>
+            </div>
+        </form>
+        <a href="{{ url_for('dashboard') }}" class="btn btn-secondary mt-3">Back to Dashboard</a>
+    </div>
+</body>
+</html>

@@ -1,0 +1,101 @@
+{% extends "base.html" %}
+{% block content %}
+<div class="container py-4">
+    <!-- Statistics Cards -->
+    <div class="row mb-4">
+        <div class="col-md-4">
+            <div class="card bg-primary text-white">
+                <div class="card-body">
+                    <h5 class="card-title">Total Completed Tasks</h5>
+                    <h2 class="display-4">{{ stats.total_completed }}</h2>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-4">
+            <div class="card bg-success text-white">
+                <div class="card-body">
+                    <h5 class="card-title">Categories</h5>
+                    <div class="small">
+                        {% for category, count in stats.categories.items() %}
+                        <div>{{ category }}: {{ count }}</div>
+                        {% endfor %}
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-4">
+            <div class="card bg-info text-white">
+                <div class="card-body">
+                    <h5 class="card-title">Monthly Progress</h5>
+                    <div class="small">
+                        {% for month, count in stats.completion_by_month.items() %}
+                        <div>{{ month }}: {{ count }}</div>
+                        {% endfor %}
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Sorting Controls -->
+    <div class="card mb-4">
+        <div class="card-body">
+            <h5 class="card-title">Sort Tasks</h5>
+            <div class="btn-group">
+                <a href="{{ url_for('view_completed_tasks', sort='date_completed', order='desc') }}" 
+                   class="btn btn-outline-primary {{ 'active' if sort_by == 'date_completed' }}">Date Completed</a>
+                <a href="{{ url_for('view_completed_tasks', sort='name', order='desc') }}" 
+                   class="btn btn-outline-primary {{ 'active' if sort_by == 'name' }}">Name</a>
+                <a href="{{ url_for('view_completed_tasks', sort='category', order='desc') }}" 
+                   class="btn btn-outline-primary {{ 'active' if sort_by == 'category' }}">Category</a>
+                <a href="{{ url_for('view_completed_tasks', sort='due_date', order='desc') }}" 
+                   class="btn btn-outline-primary {{ 'active' if sort_by == 'due_date' }}">Due Date</a>
+            </div>
+        </div>
+    </div>
+
+    <!-- Tasks Table -->
+    <div class="card">
+        <div class="card-body">
+            <h5 class="card-title">Completed Tasks</h5>
+            <div class="table-responsive">
+                <table class="table table-hover">
+                    <thead class="table-light">
+                        <tr>
+                            <th>Task Name</th>
+                            <th>Category</th>
+                            <th>Description</th>
+                            <th>Due Date</th>
+                            <th>Actions</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for task in tasks %}
+                        <tr>
+                            <td>{{ task.name }}</td>
+                            <td><span class="badge bg-secondary">{{ task.category }}</span></td>
+                            <td>{{ task.description }}</td>
+                            <td>{{ task.due_date.strftime('%Y-%m-%d %H:%M') }}</td>
+                            <td>
+                                <div class="btn-group">
+                                    <form action="{{ url_for('uncomplete_task', task_id=task.id) }}" method="post" class="d-inline">
+                                        <button type="submit" class="btn btn-sm btn-warning">Mark Incomplete</button>
+                                    </form>
+                                    <form action="{{ url_for('delete_task', task_id=task.id) }}" method="post" class="d-inline ms-2">
+                                        <button type="submit" class="btn btn-sm btn-danger" onclick="return confirm('Are you sure?')">Delete</button>
+                                    </form>
+                                </div>
+                            </td>
+                        </tr>
+                        {% else %}
+                        <tr>
+                            <td colspan="5" class="text-center">No completed tasks found.</td>
+                        </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
