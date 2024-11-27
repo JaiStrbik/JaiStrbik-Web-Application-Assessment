@@ -11,10 +11,35 @@
     <!-- Custom CSS -->
     <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
     <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
-    {% block extra_css %}{% endblock %}
+    {% block extra_css %}
+    <style>
+        /* Add padding to the body to offset the fixed navbar */
+        body {
+            padding-top: 70px; /* Adjust this value if your navbar height changes */
+        }
+        /* Style the navbar background */
+        .navbar {
+            background-color: #343a40; /* Dark background */
+        }
+        /* Style the navbar brand */
+        .navbar-brand {
+            color: #ffffff !important;
+        }
+        .navbar-brand:hover {
+            color: #d4d4d4 !important;
+        }
+        /* Style the navigation links */
+        .nav-link {
+            color: #ffffff !important;
+        }
+        .nav-link:hover {
+            color: #d4d4d4 !important;
+        }
+    </style>
+    {% endblock %}
 </head>
 <body>
-    {% if not hide_navbar %}
+    {% if session.get('user_id') %}
     <nav class="navbar navbar-expand-lg navbar-glass fixed-top">
         <div class="container">
             <a class="navbar-brand" href="{{ url_for('index') }}">Task Manager</a>

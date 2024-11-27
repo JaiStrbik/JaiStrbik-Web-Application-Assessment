@@ -1,5 +1,4 @@
-
-from flask import Blueprint, request, redirect, url_for, render_template, flash
+from flask import Blueprint, request, redirect, url_for, render_template, flash, session
 from blueprints.auth import login_required
 from flask_app.setup_db import ToDo, db_session
 from datetime import datetime
@@ -10,18 +9,12 @@ tasks_bp = Blueprint('tasks', __name__)
 @tasks_bp.route('/dashboard')
 @login_required
 def dashboard():
-    if "user_id" not in session:
-        flash("Please log in to view the dashboard", "warning")
-        return redirect(url_for('login'))
     tasks = db_session.query(ToDo).filter_by(user_id=session['user_id'], completed=False).all()
     return render_template('dashboard.html', tasks=tasks)
 
 @tasks_bp.route('/add_task', methods=['GET', 'POST'])
 @login_required
 def add_task():
-    if "user_id" not in session:
-        flash("Please log in to add a task", "warning")
-        return redirect(url_for('login'))
     if request.method == "POST":
         task_name = request.form.get('taskName')
         task_description = request.form.get('taskDescription')
@@ -53,18 +46,12 @@ def add_task():
 @tasks_bp.route('/completed_tasks')
 @login_required
 def view_completed_tasks():
-    if "user_id" not in session:
-        flash("Please log in to view completed tasks", "warning")
-        return redirect(url_for('login'))
     tasks = db_session.query(ToDo).filter_by(user_id=session['user_id'], completed=True).all()
     return render_template('completed_tasks.html', tasks=tasks)
 
 @tasks_bp.route('/complete_task/<int:task_id>', methods=['POST'])
 @login_required
 def complete_task(task_id):
-    if "user_id" not in session:
-        flash("Please log in to complete a task", "warning")
-        return redirect(url_for('login'))
     task = db_session.query(ToDo).filter_by(id=task_id, user_id=session['user_id']).first()
     if task:
         task.completed = True
@@ -79,9 +66,6 @@ def complete_task(task_id):
 @tasks_bp.route('/uncomplete_task/<int:task_id>', methods=['POST'])
 @login_required
 def uncomplete_task(task_id):
-    if "user_id" not in session:
-        flash("Please log in to uncomplete a task", "warning")
-        return redirect(url_for('login'))
     task = db_session.query(ToDo).filter_by(id=task_id, user_id=session['user_id']).first()
     if task:
         task.completed = False
@@ -96,10 +80,6 @@ def uncomplete_task(task_id):
 @tasks_bp.route('/edit_task/<int:task_id>', methods=['GET', 'POST'])
 @login_required
 def edit_task(task_id):
-    if "user_id" not in session:
-        flash("Please log in to edit a task", "warning")
-        return redirect(url_for('login'))
-    
     task = db_session.query(ToDo).filter_by(id=task_id, user_id=session['user_id']).first()
     if not task:
         flash("Task not found", "error")
@@ -135,10 +115,6 @@ def edit_task(task_id):
 @tasks_bp.route('/delete_task/<int:task_id>', methods=['POST'])
 @login_required
 def delete_task(task_id):
-    if "user_id" not in session:
-        flash("Please log in to delete a task", "warning")
-        return redirect(url_for('login'))
-    
     task = db_session.query(ToDo).filter_by(id=task_id, user_id=session['user_id']).first()
     if not task:
         flash("Task not found", "error")

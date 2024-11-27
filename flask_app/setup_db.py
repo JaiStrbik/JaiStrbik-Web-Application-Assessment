@@ -1,4 +1,4 @@
-from sqlalchemy import create_engine, Column, Integer, String, Boolean, ForeignKey, DateTime
+from sqlalchemy import create_engine, Column, Integer, String, Boolean, ForeignKey, DateTime, Enum
 from sqlalchemy.ext.declarative import declarative_base
 from sqlalchemy.orm import relationship, sessionmaker, scoped_session
 
@@ -22,5 +22,6 @@ class ToDo(Base):
     user_id = Column(Integer, ForeignKey('users.id'), nullable=False)
     completed = Column(Boolean, default=False)
     due_date = Column(DateTime, nullable=False)
+    priority = Column(Enum('low', 'medium', 'high', name='priority_levels'), default='medium')
 
 Base.metadata.create_all(bind=engine)
