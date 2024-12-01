@@ -29,18 +29,45 @@ body {
 }
 
 .navbar-brand {
-  color: white;
-  font-size: 1.5rem;
-  font-weight: 600;
+  color: white !important;
+  font-size: 1.75rem;
+  font-weight: 700;
+  letter-spacing: 0.5px;
+  text-shadow: 0 2px 4px rgba(0,0,0,0.1);
+  display: flex;
+  align-items: center;
+  gap: 10px;  /* Adds consistent spacing between logo and text */
 }
 
+/* Remove or comment out the duplicate .navbar-brand img styles */
+
+/* Remove these logo-related styles */
+/* .navbar-logo {
+    display: block;
+    width: 30px;
+    height: 30px;
+    object-fit: contain;
+    filter: brightness(0) invert(1);
+} */
+
 .navbar-nav .nav-link {
-  color: white;
-  margin-right: 1rem;
+  color: white !important;  /* Force white color */
+  font-size: 1.1rem;
+  font-weight: 500;
+  margin-right: 1.5rem;
+  opacity: 0.9;
+  transition: var(--transition);
 }
 
 .navbar-nav .nav-link:hover {
-  color: var(--primary-color);
+  opacity: 1;
+  transform: translateY(-1px);
+}
+
+.navbar .btn {
+  padding: 0.5rem 1.5rem;
+  font-weight: 600;
+  letter-spacing: 0.3px;
 }
 
 .container {
@@ -64,10 +91,11 @@ body {
 }
 
 .btn {
-  padding: 0.75rem 1.5rem;
+  padding: 1rem 1.5rem;
   border-radius: 8px;
   font-weight: 500;
   transition: var(--transition);
+  font-size: 1.1rem;
 }
 
 .btn-primary {
@@ -82,10 +110,13 @@ body {
 }
 
 .form-control {
-  padding: 0.75rem;
+  width: 100%;
+  padding: 1rem;
+  padding-right: 45px; /* Increased space for the eye icon */
   border: 2px solid #ddd;
   border-radius: 6px;
-  font-size: 1rem;
+  font-size: 1.1rem;
+  box-sizing: border-box; /* Ensures padding is included in width */
 }
 
 .form-control:focus {
@@ -134,8 +165,9 @@ body {
 }
 
 .auth-container {
-  max-width: 500px;
-  margin: 100px auto;
+  max-width: 600px;
+  margin: 80px auto;
+  width: 90%;
 }
 
 .auth-container .card {
@@ -146,17 +178,31 @@ body {
   padding-top: 80px;
 }
 
+/* Update task-card styling */
 .task-card {
-  display: grid;
-  grid-template-columns: 1fr auto;
-  gap: 1rem;
-  align-items: center;
-  background: white;
-  border-radius: 10px;
-  box-shadow: 0 4px 6px rgba(0,0,0,0.1);
-  padding: 1.25rem;
-  margin-bottom: 1.5rem;
-  border-left: 4px solid var(--primary-color);
+    display: flex;
+    flex-direction: column;
+    background: white;
+    border-radius: 10px;
+    box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+    padding: 1.25rem;
+    margin-bottom: 1.5rem;
+    border-left: 4px solid var(--primary-color);
+}
+
+.task-content {
+    flex: 1;
+    margin-bottom: 1rem;
+}
+
+.task-actions {
+    display: flex;
+    gap: 0.5rem;
+    flex-wrap: wrap;
+}
+
+.task-actions form {
+    margin: 0;
 }
 
 .task-card h5 {
@@ -211,6 +257,33 @@ body {
   margin-bottom: 0.5rem;
 }
 
+.stat-card.clickable {
+  cursor: pointer;
+  transition: transform 0.2s ease, box-shadow 0.2s ease;
+}
+
+.stat-card.clickable:hover {
+  transform: translateY(-2px);
+  box-shadow: var(--shadow-lg);
+}
+
+.stat-card.active {
+  transform: translateY(-2px);
+  box-shadow: var(--shadow-lg);
+  position: relative;
+}
+
+.stat-card.active::after {
+  content: '';
+  position: absolute;
+  bottom: -10px;
+  left: 50%;
+  transform: translateX(-50%);
+  border-left: 10px solid transparent;
+  border-right: 10px solid transparent;
+  border-top: 10px solid var(--primary-color);
+}
+
 /* Form Container Styles */
 .form-container {
     max-width: 800px;
@@ -237,7 +310,7 @@ body {
 }
 
 .form-group {
-    margin-bottom: 1.5rem;
+    margin-bottom: 2rem;
 }
 
 .form-group label {
@@ -293,8 +366,9 @@ body {
 }
 
 .form-actions .btn {
-    padding: 0.75rem 1.5rem;
+    padding: 1rem 1.5rem;
     font-weight: 500;
+    font-size: 1.1rem;
 }
 
 .form-actions .btn-primary {
@@ -303,6 +377,10 @@ body {
 
 .form-actions .btn-secondary {
     flex: 1;
+    white-space: nowrap; /* Prevents button text from wrapping */
+    flex-shrink: 0; /* Prevents buttons from shrinking */
+    height: 50px;
+    min-width: 100px;
 }
 
 /* Enhanced Auth Styles */
@@ -310,7 +388,7 @@ body {
     background: white;
     border-radius: 16px;
     box-shadow: var(--shadow-lg);
-    padding: 2.5rem;
+    padding: 3rem;
     max-width: 480px;
     width: 100%;
 }
@@ -322,18 +400,18 @@ body {
 
 .auth-header h1 {
     color: var(--secondary-color);
-    font-size: 2rem;
+    font-size: 2.5rem;
     font-weight: 700;
     margin-bottom: 0.5rem;
 }
 
 .auth-header .subtitle {
     color: #64748b;
-    font-size: 1.1rem;
+    font-size: 1.2rem;
 }
 
 .auth-form .form-group {
-    margin-bottom: 1.5rem;
+    margin-bottom: 2rem;
 }
 
 .auth-form .form-text {
@@ -358,30 +436,119 @@ body {
 
 /* Enhanced Landing Page Styles */
 .hero {
-    background: var(--gradient-primary);
-    padding: 160px 0 100px;
-    position: relative;
-    overflow: hidden;
+    background: linear-gradient(135deg, #2c3e50 0%, #3498db 100%);
+    padding: 160px 0 120px;
+    color: white;
+    margin-top: 0;
 }
 
 .hero-title {
     font-size: 3.5rem;
-    font-weight: 700;
-    color: white;
+    font-weight: 800;
     margin-bottom: 1.5rem;
     line-height: 1.2;
+    background: linear-gradient(to right, #fff, #e3f2fd);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
 }
 
-.hero-subtitle {
-    font-size: 1.25rem;
-    color: rgba(255, 255, 255, 0.9);
+.hero-stats {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 2rem;
+    margin: 2rem 0;
+    padding: 2rem;
+    background: rgba(255, 255, 255, 0.1);
+    border-radius: 16px;
+    backdrop-filter: blur(10px);
+}
+
+.stat-item {
+    text-align: center;
+}
+
+.stat-number {
+    display: block;
+    font-size: 2.5rem;
+    font-weight: 700;
+    color: #fff;
+}
+
+.stat-label {
+    font-size: 0.9rem;
+    opacity: 0.9;
+}
+
+.feature-card {
+    padding: 2.5rem;
+    border-radius: 16px;
+    background: white;
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+    transition: transform 0.3s ease;
+    text-align: center;
+}
+
+.feature-card:hover {
+    transform: translateY(-10px);
+}
+
+.feature-icon {
+    font-size: 2.5rem;
+    color: #3498db;
+    margin-bottom: 1.5rem;
+}
+
+.about {
+    padding: 120px 0;
+    background: #f8fafc;
+}
+
+.about-content {
+    padding: 2rem;
+}
+
+.about-text {
+    font-size: 1.1rem;
+    line-height: 1.8;
+    color: #2c3e50;
     margin-bottom: 2rem;
-    line-height: 1.6;
 }
 
-.hero-image {
-    max-width: 100%;
-    height: auto;
+.about-stats {
+    display: grid;
+    gap: 1rem;
+}
+
+.stat-row {
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+    font-size: 1.1rem;
+    color: #2c3e50;
+}
+
+.stat-row i {
+    color: #3498db;
+    font-size: 1.5rem;
+}
+
+.cta {
+    background: linear-gradient(135deg, #2c3e50 0%, #3498db 100%);
+    padding: 100px 0;
+    color: white;
+    text-align: center;
+}
+
+.cta h2 {
+    font-size: 2.5rem;
+    font-weight: 700;
+    margin-bottom: 1.5rem;
+}
+
+.cta p {
+    font-size: 1.25rem;
+    opacity: 0.9;
+    margin-bottom: 2rem;
 }
 
 .features {
@@ -396,6 +563,10 @@ body {
     box-shadow: var(--shadow-md);
     text-align: center;
     transition: var(--transition);
+    height: 100%;  /* Ensures equal height */
+    display: flex;
+    flex-direction: column;
+    justify-content: flex-start;
 }
 
 .feature-card:hover {
@@ -425,3 +596,426 @@ body {
     font-weight: 700;
     margin-bottom: 3rem;
 }
+
+/* Calendar Styles */
+.calendar-grid table {
+    width: 100%;
+    table-layout: fixed;
+}
+
+.calendar-grid td {
+    height: 70px;
+    vertical-align: top;
+    padding: 5px;
+    position: relative;
+}
+
+.calendar-grid td.has-tasks {
+    background-color: rgba(74, 144, 226, 0.1);
+    cursor: pointer;
+}
+
+.calendar-grid td.has-tasks:hover {
+    background-color: rgba(74, 144, 226, 0.2);
+}
+
+.task-count {
+    position: absolute;
+    bottom: 5px;
+    right: 5px;
+    background: var(--primary-color);
+    color: white;
+    border-radius: 50%;
+    width: 20px;
+    height: 20px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 12px;
+}
+
+#tasksList {
+    max-height: 300px;
+    overflow-y: auto;
+}
+
+#filteredTasks {
+    background: white;
+    border-radius: 12px;
+    padding: 1.5rem;
+    box-shadow: var(--shadow-md);
+    margin-bottom: 2rem;
+}
+
+.contact {
+    padding: 80px 0;
+    background-color: #f8f9fa;
+}
+
+.contact-card {
+    background: white;
+    padding: 30px;
+    border-radius: 10px;
+    box-shadow: 0 2px 15px rgba(0, 0, 0, 0.1);
+}
+
+.contact-icon {
+    font-size: 40px;
+    margin-bottom: 20px;
+}
+
+.contact .form-control {
+    margin-bottom: 15px;
+    padding: 12px;
+    border: 1px solid #ddd;
+    border-radius: 5px;
+}
+
+.contact textarea.form-control {
+    resize: none;
+}
+
+/* Remove any filters on logo images */
+.navbar-brand img {
+    filter: none;
+}
+
+/* Add About section styling */
+.about {
+    padding: 80px 0;
+    background-color: #f8f9fa;
+}
+
+.about-card {
+    background: white;
+    padding: 30px;
+    border-radius: 10px;
+    box-shadow: 0 2px 15px rgba(0, 0, 0, 0.1);
+}
+
+.about-icon {
+    font-size: 40px;
+    margin-bottom: 20px;
+}
+
+/* Completed Tasks Page Styles */
+.page-header {
+    background: white;
+    border-radius: 12px;
+    padding: 1.5rem;
+    box-shadow: var(--shadow-md);
+}
+
+.section-card {
+    background: white;
+    border-radius: 12px;
+    padding: 1.5rem;
+    box-shadow: var(--shadow-md);
+}
+
+.section-title {
+    font-size: 1.5rem;
+    color: var(--secondary-color);
+    margin-bottom: 1.5rem;
+    padding-bottom: 1rem;
+    border-bottom: 2px solid #e2e8f0;
+}
+
+.task-list {
+    display: flex;
+    flex-direction: column;
+    gap: 1rem;
+}
+
+.task-item {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 1rem;
+    background: #f8fafc;
+    border-radius: 8px;
+    border-left: 4px solid var(--primary-color);
+}
+
+.task-content {
+    flex: 1;
+}
+
+.task-content h4 {
+    margin: 0 0 0.5rem 0;
+    color: var(--secondary-color);
+}
+
+.task-description {
+    margin: 0 0 0.5rem 0;
+    color: #64748b;
+}
+
+.task-actions {
+    display: flex;
+    gap: 0.5rem;
+}
+
+/* Enhanced Task Actions for Completed Tasks */
+.task-actions .btn-group {
+    display: flex;
+    align-items: stretch;
+    gap: 0.5rem;
+}
+
+.task-actions .btn-group form {
+    display: flex;
+}
+
+.task-actions .btn {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    padding: 0.5rem 1rem;
+    height: 38px;  /* Fixed height for consistency */
+    font-weight: 500;
+    border-radius: 6px;
+    transition: all 0.2s ease;
+    white-space: nowrap;
+}
+
+.task-actions .btn-icon {
+    width: 38px;  /* Same as height for square aspect ratio */
+    padding: 0;
+}
+
+.task-actions .btn-outline-primary {
+    color: var(--primary-color);
+    border-color: var(--primary-color);
+}
+
+.task-actions .btn-outline-primary:hover {
+    background-color: var(--primary-color);
+    color: white;
+    transform: translateY(-1px);
+}
+
+.task-actions .btn-group {
+    display: flex;
+    gap: 0.5rem;
+}
+
+.task-actions .btn-group form {
+    display: flex;
+}
+
+.task-actions .btn {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    padding: 0.5rem 1rem;
+    font-weight: 500;
+    border-radius: 6px;
+    transition: all 0.2s ease;
+}
+
+.task-actions .btn-outline-warning {
+    color: #ffa502;
+    border-color: #ffa502;
+}
+
+.task-actions .btn-outline-warning:hover {
+    background-color: #ffa502;
+    color: white;
+    transform: translateY(-1px);
+}
+
+.task-actions .btn-outline-danger {
+    color: #ff4757;
+    border-color: #ff4757;
+}
+
+.task-actions .btn-outline-danger:hover {
+    background-color: #ff4757;
+    color: white;
+    transform: translateY(-1px);
+}
+
+.task-actions .btn i {
+    margin-right: 0.5rem;
+}
+
+.task-actions .btn-outline-danger i {
+    margin-right: 0;
+}
+
+.task-item .task-actions .btn-warning {
+    background-color: #ffa502;
+    border-color: #ffa502;
+    color: white;
+    font-weight: 500;
+}
+
+.task-item .task-actions .btn-warning:hover {
+    background-color: #ff9f00;
+    border-color: #ff9f00;
+    transform: translateY(-1px);
+}
+
+.task-item .task-actions .btn-danger {
+    background-color: #ff4757;
+    border-color: #ff4757;
+    color: white;
+    font-weight: 500;
+}
+
+.task-item .task-actions .btn-danger:hover {
+    background-color: #ff3040;
+    border-color: #ff3040;
+    transform: translateY(-1px);
+}
+
+.task-item .task-actions .btn {
+    padding: 0.5rem 1rem;
+    box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+    transition: all 0.2s ease;
+}
+
+.task-item .task-actions .btn i {
+    margin-right: 0.25rem;
+}
+
+.category-title {
+    font-size: 1.25rem;
+    color: var(--secondary-color);
+    margin: 1rem 0;
+    padding-left: 1rem;
+    border-left: 4px solid var(--primary-color);
+}
+
+.category-section:not(:last-child) {
+    border-bottom: 1px solid #e2e8f0;
+    padding-bottom: 1.5rem;
+}
+
+/* Password Toggle Button Styles */
+.password-toggle {
+    cursor: pointer;
+    color: #495057;
+    border: none !important;
+    background: none !important;
+    transition: all 0.2s ease;
+    z-index: 10;
+    width: 40px;
+    height: 40px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    box-shadow: none !important;
+}
+
+/* Password Container Styles */
+.password-container {
+    position: relative;
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+    width: 100%;
+}
+
+.password-input-wrapper {
+    position: relative;
+    flex-grow: 1;
+    width: 100%;
+    display: flex;
+}
+
+.password-input-wrapper input {
+    width: 100%;
+    padding-right: 45px;  /* Space for the eye icon */
+}
+
+.password-input-wrapper .password-toggle {
+    position: absolute;
+    right: 8px;
+    top: 50%;
+    transform: translateY(-50%);
+    z-index: 2;
+    background: none;
+    border: none;
+    padding: 0.5rem;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.password-container .btn-secondary {
+    height: 45px;
+    padding: 0 1rem;
+    font-size: 1rem;
+}
+
+.password-container .btn {
+    white-space: nowrap;
+}
+
+.password-toggle {
+    position: absolute;
+    right: 8px; /* Slightly adjusted position */
+    top: 50%;
+    transform: translateY(-50%);
+    z-index: 2;
+    background: none;
+    border: none;
+    padding: 0.5rem;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+/* ...existing code... */
+
+.hero-image-wrapper {
+    position: relative;
+    padding: 20px;
+    perspective: 1000px;
+}
+
+.hero-image {
+    width: 100%;
+    height: auto;
+    border-radius: 12px;
+    box-shadow: 0 20px 40px rgba(0, 0, 0, 0.2);
+    transform: rotateY(-5deg) rotateX(5deg);
+    transition: transform 0.3s ease;
+}
+
+.hero-image.floating {
+    animation: float 6s ease-in-out infinite;
+}
+
+.hero-image-overlay {
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background: linear-gradient(
+        135deg,
+        rgba(255, 255, 255, 0.1) 0%,
+        rgba(255, 255, 255, 0.05) 100%
+    );
+    border-radius: 12px;
+    pointer-events: none;
+}
+
+@keyframes float {
+    0% {
+        transform: rotateY(-5deg) rotateX(5deg) translateY(0px);
+    }
+    50% {
+        transform: rotateY(-5deg) rotateX(5deg) translateY(-20px);
+    }
+    100% {
+        transform: rotateY(-5deg) rotateX(5deg) translateY(0px);
+    }
+}
+
+/* ...existing code... */

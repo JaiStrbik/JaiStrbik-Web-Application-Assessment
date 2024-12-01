@@ -5,6 +5,7 @@ from werkzeug.security import generate_password_hash, check_password_hash
 from sqlalchemy.exc import IntegrityError
 from sqlalchemy import extract
 from datetime import datetime, date
+import re
 
 app = Flask(__name__, 
            static_url_path='/static',  # Serve static files from /static URL
@@ -37,6 +38,14 @@ def signup():
     if request.method == "POST":
         username = request.form.get('username')
         password = request.form.get('password')
+
+        # Validate password requirements
+        if not (re.search(r'[A-Za-z]', password) and  # at least one letter
+                re.search(r'[0-9]', password) and      # at least one number
+                re.search(r'[!@#$%^&*(),.?":{}|<>]', password)): # at least one symbol
+            flash("Password must contain at least one letter, one number, and one symbol", "error")
+            return redirect(url_for('signup'))
+
         hashed_password = generate_password_hash(password, method='pbkdf2:sha256')
         
         new_user = User(username=username, password=hashed_password)
@@ -98,10 +107,29 @@ def dashboard():
     completed_tasks = db_session.query(ToDo).filter_by(user_id=session['user_id'], completed=True).all()
     overdue_tasks = [task for task in tasks if task.due_date < current_time]
     
+    # Function to convert ToDo object to dictionary
+    def serialize_task(task):
+        return {
+            'id': task.id,
+            'name': task.name,
+            'description': task.description,
+            'category': task.category,
+            'due_date': task.due_date.strftime('%Y-%m-%d %H:%M:%S'),
+            'completed': task.completed
+        }
+
+    # Convert all tasks to dictionaries
+    serialized_tasks = [serialize_task(task) for task in tasks]
+    serialized_completed = [serialize_task(task) for task in completed_tasks]
+    serialized_overdue = [serialize_task(task) for task in overdue_tasks]
+    
     return render_template('dashboard.html', 
-                         tasks=tasks,
-                         completed_tasks=completed_tasks,
-                         overdue_tasks=overdue_tasks)
+                         tasks=tasks,  # Original tasks for normal rendering
+                         completed_tasks=completed_tasks,  # Original tasks for normal rendering
+                         overdue_tasks=overdue_tasks,  # Original tasks for normal rendering
+                         tasks_json=serialized_tasks,  # Serialized tasks for JavaScript
+                         completed_tasks_json=serialized_completed,  # Serialized tasks for JavaScript
+                         overdue_tasks_json=serialized_overdue)  # Serialized tasks for JavaScript
 
 @app.route('/completed_tasks')
 def view_completed_tasks():
@@ -210,6 +238,11 @@ def delete_task(task_id):
         db_session.rollback()
         flash(f"An error occurred: {str(e)}", "error")
     return redirect(url_for('dashboard'))
+
+# Remove or comment out the calendar_view route since we're not using it anymore
+# @app.route('/calendar')
+# def calendar_view():
+#     ...
 
 @app.route('/logout')
 def logout():

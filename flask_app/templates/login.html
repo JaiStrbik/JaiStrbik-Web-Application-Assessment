@@ -1,5 +1,8 @@
 {% extends "base.html" %}
-<!-- ...rest of template content... -->
+
+{% block head %}
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css">
+{% endblock %}
 
 {% block title %}Login | Task Manager{% endblock %}
 
@@ -15,7 +18,15 @@
             
             <div class="form-group">
                 <label for="password">Password</label>
-                <input type="password" id="password" name="password" class="form-control" required>
+                <div class="password-container" style="position: relative;">
+                    <input type="password" id="password" name="password" class="form-control" required>
+                    <button type="button" class="btn password-toggle" 
+                            onclick="togglePassword()" 
+                            style="position: absolute; right: 10px; top: 50%; transform: translateY(-50%); padding: 0.5rem; border: none; background: none;"
+                            title="Toggle password visibility">
+                        <i class="fas fa-eye"></i>
+                    </button>
+                </div>
             </div>
             
             <button type="submit" class="btn btn-primary btn-block">Login</button>
@@ -23,6 +34,25 @@
         <p class="text-center mt-3">
             Don't have an account? <a href="{{ url_for('signup') }}">Sign up</a>
         </p>
+        <p class="text-center">
+            Back to <a href="{{ url_for('index') }}">Home Page</a>
+        </p>
     </div>
 </div>
+
+<script>
+function togglePassword() {
+    const passwordInput = document.getElementById('password');
+    const toggleBtn = document.querySelector('.password-toggle');
+    const icon = toggleBtn.querySelector('i');
+    
+    if (passwordInput.type === 'password') {
+        passwordInput.type = 'text';
+        icon.className = 'fas fa-eye-slash';
+    } else {
+        passwordInput.type = 'password';
+        icon.className = 'fas fa-eye';
+    }
+}
+</script>
 {% endblock %}

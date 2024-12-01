@@ -7,31 +7,55 @@
     <link href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css" rel="stylesheet">
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="{{ url_for('static', filename='css/main.css') }}">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
 </head>
 <body>
-    <nav class="navbar navbar-expand-lg navbar-light fixed-top">
+    <nav class="navbar navbar-expand-lg navbar-dark fixed-top">
         <div class="container">
-            <a class="navbar-brand" href="#">Task Manager</a>
+            <a class="navbar-brand" href="#">
+                <i class="fas fa-check-circle"></i>
+                TaskMaster
+            </a>
             <div class="ml-auto">
-                <a href="{{ url_for('login') }}" class="btn btn-outline-primary mr-2">Login</a>
-                <a href="{{ url_for('signup') }}" class="btn btn-primary">Get Started</a>
+                <a href="{{ url_for('login') }}" class="btn btn-outline-light mr-2">Login</a>
+                <a href="{{ url_for('signup') }}" class="btn btn-light">Get Started</a>
             </div>
         </div>
     </nav>
 
     <section class="hero">
         <div class="container">
+            <img src="{{ url_for('static', filename='logo.png') }}" alt="Logo" class="logo">
             <div class="row align-items-center">
                 <div class="col-lg-6">
-                    <h1 class="hero-title">Manage Tasks with Confidence</h1>
-                    <p class="hero-subtitle">Stay organized, meet deadlines, and achieve your goals with our powerful task management solution.</p>
+                    <h1 class="hero-title">Master Your Day with TaskMaster</h1>
+                    <p class="hero-subtitle">The smart way to organize tasks, meet deadlines, and boost your productivity.</p>
+                    <div class="hero-stats">
+                        <div class="stat-item">
+                            <span class="stat-number">10k+</span>
+                            <span class="stat-label">Active Users</span>
+                        </div>
+                        <div class="stat-item">
+                            <span class="stat-number">1M+</span>
+                            <span class="stat-label">Tasks Completed</span>
+                        </div>
+                        <div class="stat-item">
+                            <span class="stat-number">4.9/5</span>
+                            <span class="stat-label">User Rating</span>
+                        </div>
+                    </div>
                     <div class="hero-buttons">
-                        <a href="{{ url_for('signup') }}" class="btn btn-primary btn-lg">Start Free</a>
-                        <a href="#features" class="btn btn-outline-light btn-lg ml-3">Learn More</a>
+                        <a href="{{ url_for('signup') }}" class="btn btn-light btn-lg">Start Free</a>
+                        <a href="#features" class="btn btn-outline-light btn-lg">Learn More</a>
                     </div>
                 </div>
                 <div class="col-lg-6">
-                    <img src="{{ url_for('static', filename='img/hero-image.svg') }}" alt="Task Management" class="hero-image">
+                    <div class="hero-image-wrapper">
+                        <img src="{{ url_for('static', filename='img/dashboard-preview.png') }}" 
+                             alt="TaskMaster Dashboard" 
+                             class="hero-image floating">
+                        <div class="hero-image-overlay"></div>
+                    </div>
                 </div>
             </div>
         </div>
@@ -39,30 +63,68 @@
 
     <section id="features" class="features">
         <div class="container">
-            <h2 class="section-title text-center">Why Choose Our Task Manager?</h2>
+            <h2 class="section-title text-center">Why Choose TaskMaster?</h2>
             <div class="row mt-5">
                 <div class="col-md-4">
                     <div class="feature-card">
-                        <div class="feature-icon">📋</div>
-                        <h3>Easy Organization</h3>
-                        <p>Organize tasks by categories and priorities to stay focused on what matters most.</p>
+                        <i class="fas fa-tasks feature-icon"></i>
+                        <h3>Smart Organization</h3>
+                        <p>Categorize tasks, set priorities, and manage deadlines with our intuitive interface.</p>
                     </div>
                 </div>
                 <div class="col-md-4">
                     <div class="feature-card">
-                        <div class="feature-icon">⏰</div>
-                        <h3>Deadline Tracking</h3>
-                        <p>Never miss a deadline with our intuitive due date management system.</p>
+                        <i class="fas fa-chart-line feature-icon"></i>
+                        <h3>Track Progress</h3>
+                        <p>Monitor your productivity with detailed analytics and completion statistics.</p>
                     </div>
                 </div>
                 <div class="col-md-4">
                     <div class="feature-card">
-                        <div class="feature-icon">📊</div>
-                        <h3>Progress Insights</h3>
-                        <p>Track your productivity with detailed progress reports and statistics.</p>
+                        <i class="fas fa-bell feature-icon"></i>
+                        <h3>Never Miss Deadlines</h3>
+                        <p>Stay on top of your tasks with smart reminders and notifications.</p>
                     </div>
                 </div>
             </div>
+        </div>
+    </section>
+
+    <section class="about" id="about">
+        <div class="container">
+            <div class="row align-items-center">
+                <div class="col-lg-6">
+                    <div class="about-content">
+                        <h2 class="section-title">About TaskMaster</h2>
+                        <p class="about-text">TaskMaster was created with a simple mission: to help people stay organized and productive in their daily lives. Whether you're a student managing assignments, a professional juggling projects, or someone who wants to stay on top of their personal tasks, TaskMaster is here to help.</p>
+                        <div class="about-stats">
+                            <div class="stat-row">
+                                <i class="fas fa-calendar-check"></i>
+                                <span>Launched in 2023</span>
+                            </div>
+                            <div class="stat-row">
+                                <i class="fas fa-users"></i>
+                                <span>Growing Community</span>
+                            </div>
+                            <div class="stat-row">
+                                <i class="fas fa-code"></i>
+                                <span>Regular Updates</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-lg-6">
+                    <img src="{{ url_for('static', filename='img/about-illustration.png') }}" alt="About TaskMaster" class="about-image">
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <section class="cta">
+        <div class="container text-center">
+            <h2>Ready to Boost Your Productivity?</h2>
+            <p>Join thousands of users who are already managing their tasks more effectively.</p>
+            <a href="{{ url_for('signup') }}" class="btn btn-light btn-lg mt-4">Get Started Now</a>
         </div>
     </section>
 

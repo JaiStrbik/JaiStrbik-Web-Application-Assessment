@@ -26,14 +26,13 @@
                 </select>
             </div>
 
-            <div class="datetime-wrapper">
-                <div class="form-group">
-                    <label class="datetime-label">Due Date and Time</label>
-                    <input type="text" id="datetime" class="flatpickr-input" 
-                           value="{{ task.due_date.strftime('%Y-%m-%d %H:%M') }}" required>
-                    <input type="hidden" id="dueDate" name="dueDate">
-                    <input type="hidden" id="dueTime" name="dueTime">
-                </div>
+            <div class="form-group datetime-wrapper">
+                <label class="datetime-label">Due Date and Time</label>
+                <input type="text" id="datetime" class="flatpickr-input form-control" 
+                       value="{{ task.due_date.strftime('%Y-%m-%d %H:%M') }}" 
+                       placeholder="Select date and time..." required>
+                <input type="hidden" id="dueDate" name="dueDate" value="{{ task.due_date.strftime('%Y-%m-%d') }}">
+                <input type="hidden" id="dueTime" name="dueTime" value="{{ task.due_date.strftime('%H:%M') }}">
             </div>
 
             <div class="form-group">

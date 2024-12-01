@@ -6,6 +6,7 @@
     <title>Sign Up - Task Manager</title>
     <link rel="stylesheet" href="{{ url_for('static', filename='css/main.css') }}">
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css">
 </head>
 <body>
     <div class="auth-container">
@@ -23,7 +24,7 @@
                 {% endif %}
             {% endwith %}
 
-            <form method="POST" class="auth-form">
+            <form method="POST" class="auth-form" onsubmit="return validateForm()">
                 <div class="form-group">
                     <label for="username">Username</label>
                     <input type="text" id="username" name="username" class="form-control" required>
@@ -31,16 +32,122 @@
                 </div>
                 <div class="form-group">
                     <label for="password">Password</label>
-                    <input type="password" id="password" name="password" class="form-control" required>
-                    <small class="form-text">Use at least 8 characters with letters and numbers</small>
+                    <div class="password-container">
+                        <div class="password-input-wrapper">
+                            <input type="password" id="password" name="password" class="form-control" required>
+                            <button type="button" class="btn password-toggle" 
+                                    onclick="togglePassword()" 
+                                    title="Toggle password visibility">
+                                <i class="fas fa-eye"></i>
+                            </button>
+                        </div>
+                        <button type="button" class="btn btn-secondary" onclick="copyPassword()" title="Copy password">
+                            <i class="fas fa-copy"></i> Copy
+                        </button>
+                        <button type="button" class="btn btn-secondary" onclick="generatePassword()">Generate</button>
+                        <button type="button" class="btn btn-secondary" onclick="clearPassword()">Clear</button>
+                    </div>
+                    <small class="form-text">Password must contain at least one letter, one number, and one symbol</small>
                 </div>
                 <button type="submit" class="btn btn-primary btn-block">Create Account</button>
             </form>
             
             <div class="auth-footer">
                 <p>Already have an account? <a href="{{ url_for('login') }}" class="link-primary">Login here</a></p>
+                <p>Back to <a href="{{ url_for('index') }}" class="link-primary">Home Page</a></p>
             </div>
         </div>
     </div>
+
+    <script>
+    function validateForm() {
+        const password = document.getElementById('password').value;
+        const hasLetter = /[a-zA-Z]/.test(password);
+        const hasNumber = /[0-9]/.test(password);
+        const hasSymbol = /[!@#$%^&*(),.?":{}|<>]/.test(password);
+
+        if (!hasLetter || !hasNumber || !hasSymbol) {
+            alert('Password must contain at least one letter, one number, and one symbol');
+            return false;
+        }
+        return true;
+    }
+
+    function generatePassword() {
+        const length = 12; // Length of password
+        const letters = 'abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ';
+        const numbers = '0123456789';
+        const symbols = '!@#$%^&*(),.?":{}|<>';
+        
+        // Ensure at least one of each required character type
+        let password = 
+            letters.charAt(Math.floor(Math.random() * letters.length)) +
+            numbers.charAt(Math.floor(Math.random() * numbers.length)) +
+            symbols.charAt(Math.floor(Math.random() * symbols.length));
+        
+        // Fill the rest with random characters from all types
+        const allChars = letters + numbers + symbols;
+        for(let i = password.length; i < length; i++) {
+            password += allChars.charAt(Math.floor(Math.random() * allChars.length));
+        }
+
+        // Shuffle the password
+        password = password.split('').sort(() => Math.random() - 0.5).join('');
+        
+        // Update the password field
+        document.getElementById('password').value = password;
+        document.getElementById('password').type = 'text';
+        setTimeout(() => {
+            document.getElementById('password').type = 'password';
+        }, 3000); // Hide password after 3 seconds
+    }
+
+    function clearPassword() {
+        document.getElementById('password').value = '';
+        document.getElementById('password').type = 'password';
+    }
+
+    function togglePassword() {
+        const passwordInput = document.getElementById('password');
+        const toggleBtn = document.querySelector('.password-toggle');
+        const icon = toggleBtn.querySelector('i');
+        
+        if (passwordInput.type === 'password') {
+            passwordInput.type = 'text';
+            icon.className = 'fas fa-eye-slash';
+        } else {
+            passwordInput.type = 'password';
+            icon.className = 'fas fa-eye';
+        }
+    }
+
+    async function copyPassword() {
+        const passwordInput = document.getElementById('password');
+        const currentType = passwordInput.type;
+        
+        // Temporarily show password to copy it
+        passwordInput.type = 'text';
+        
+        try {
+            await navigator.clipboard.writeText(passwordInput.value);
+            
+            // Show feedback
+            const btn = document.querySelector('button[onclick="copyPassword()"]');
+            btn.innerHTML = '<i class="fas fa-check"></i> Copied!';
+            btn.style.backgroundColor = '#28a745';
+            
+            // Reset button after 2 seconds
+            setTimeout(() => {
+                btn.innerHTML = '<i class="fas fa-copy"></i> Copy';
+                btn.style.backgroundColor = '';
+            }, 2000);
+        } catch (err) {
+            console.error('Failed to copy password:', err);
+        } finally {
+            // Restore original input type
+            passwordInput.type = currentType;
+        }
+    }
+    </script>
 </body>
 </html>
