@@ -1019,3 +1019,18 @@ body {
 }
 
 /* ...existing code... */
+
+.logo {
+    display: block;
+    max-width: 150px;
+    height: auto;
+    margin: 0 auto 2rem;
+    filter: drop-shadow(0 4px 6px rgba(0, 0, 0, 0.1));
+    transition: transform 0.3s ease;
+}
+
+.logo:hover {
+    transform: translateY(-2px);
+}
+
+/* ...existing code... */
