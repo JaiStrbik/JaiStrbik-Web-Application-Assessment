@@ -22,9 +22,9 @@ Task Master is a task manager web application that utilizes SQLAlchemy and Flask
 
 # Installation
 
-https://github.com/JaiStrbik/JaiStrbik-Web-Application-Assessment
-http://127.0.0.1:5000/
-Requires - pip install -r requirements.txt
+- https://github.com/JaiStrbik/JaiStrbik-Web-Application-Assessment
+- http://127.0.0.1:5000/
+- Requires - pip install -r requirements.txt
 ## 🚀 About Me
 - My name is Jai I am 17 years old and in my first year at learning software engineer at Saint Augustine’s College Sydney.
 - I am driven by the core values of hard work, innovation, and integrity. 
